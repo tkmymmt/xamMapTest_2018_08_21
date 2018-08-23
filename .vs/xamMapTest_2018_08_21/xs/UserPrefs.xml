@@ -1,0 +1,15 @@
+﻿<Properties StartupConfiguration="{EE05D175-C36C-4715-B750-3DDD0A130685}|Default">
+  <MonoDevelop.Ide.Workbench>
+    <Files>
+      <File FileName="xamMapTest_2018_08_21/ViewController.cs" Line="65" Column="13" />
+      <File FileName="xamMapTest_2018_08_21/AppDelegate.cs" Line="11" Column="42" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug|iPhoneSimulator" />
+  <MonoDevelop.Ide.ItemProperties.xamMapTest__2018__08__21 PreferredExecutionTarget="MonoDevelop.IPhone.IPhoneSimulatorTarget.6AC674A6-4347-4884-AC0C-6F0BA7D5F0B8" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MultiItemStartupConfigurations />
+</Properties>

@@ -18,42 +18,23 @@ namespace xamMapTest_2018_08_21
 			// Note: this .ctor should not contain any initialization logic.
 		}
 
-		public override void ViewDidAppear(bool animated)
-		{
-			base.ViewDidAppear(true);
-			if(!_mapView.Annotations.Any())
-			{
-				_mapView.RemoveAnnotations(_mapView.Annotations);
-			}
-			if (_mapView.Overlays != null)
-			{
-				_mapView.RemoveOverlays(_mapView.Overlays);
-			}
-
-			#region Test
-
-			var loc = new MyCLLocationManagerDelegate(_locationManager, _mapView);
-			loc.Test();
-
-#endregion
-
-			_locationManager.StartUpdatingLocation();
-		}
-
 		public override void ViewDidLoad()
 		{
 			base.ViewDidLoad();
 
+			var willEnterObj = UIApplication.Notifications.ObserveWillEnterForeground((sender, e) => displayNavigationTest());
+
 			_locationManager = new CLLocationManager();
+			_locationManager.Delegate = new MyCLLocationManagerDelegate(_locationManager, _mapView);
+
 			_mapView = new MKMapView
 			{
 				
 				TranslatesAutoresizingMaskIntoConstraints = false
 			};
+			_mapView.Delegate = new MyMKMapViewDelegate();
 
-			_locationManager.Delegate = new MyCLLocationManagerDelegate(_locationManager, _mapView);
-
-			var status = CLLocationManager.Status;
+			CLAuthorizationStatus status = CLLocationManager.Status;
 			if (status == CLAuthorizationStatus.NotDetermined)
 			{
 				Console.WriteLine("didChangeAuthorizationStatus");
@@ -70,11 +51,11 @@ namespace xamMapTest_2018_08_21
 			_mapView.TopAnchor.ConstraintEqualTo(View.TopAnchor).Active = true;
 			_mapView.HeightAnchor.ConstraintEqualTo(View.HeightAnchor).Active = true;
 
-			_mapView.Delegate = new MyMKMapViewDelegate();
-
-			_locationManager.DesiredAccuracy = CLLocation.AccuracyBest;
-
-			_locationManager.DistanceFilter = 300;
+		}
+		public override void ViewDidAppear(bool animated)
+		{
+			base.ViewDidAppear(animated);
+			displayNavigationTest();
 		}
 
 		public override void DidReceiveMemoryWarning()
@@ -117,6 +98,7 @@ namespace xamMapTest_2018_08_21
 				};
 
 				var directions = new MKDirections(request);
+
 				directions.CalculateDirections((r, e) =>
 				{
 					if (r == null || !r.Routes.Any())
@@ -170,6 +152,7 @@ namespace xamMapTest_2018_08_21
 			{
 				Console.WriteLine("locationManager error");
 			}
+
 			#region Test
 			public void Test()
 			{
@@ -183,7 +166,7 @@ namespace xamMapTest_2018_08_21
 				getRoute();
 				showUserAndDestinationOnMap();
 			}
-#endregion
+			#endregion
 		}
 
 		class MyMKMapViewDelegate : MKMapViewDelegate
@@ -195,13 +178,30 @@ namespace xamMapTest_2018_08_21
 					var polylineRenderer = new MKPolylineRenderer(overlay as MKPolyline)
 					{
 						StrokeColor = UIColor.Blue,
-						LineWidth = 5
+						LineWidth = 1
 					};
 					return polylineRenderer;
 				}
 
 				return null;
 			}
+		}
+
+		void displayNavigationTest()
+		{
+			if (!_mapView.Annotations.Any())
+
+			{
+				_mapView.RemoveAnnotations(_mapView.Annotations);
+			}
+
+			if (_mapView.Overlays != null)
+			{
+				_mapView.RemoveOverlays(_mapView.Overlays);
+			}
+
+			var loc = new MyCLLocationManagerDelegate(_locationManager, _mapView);
+			loc.Test();
 		}
 	}
 }
