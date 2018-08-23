@@ -1,0 +1,23 @@
+
+Microsoft Visual Studio Solution File, Format Version 12.00
+# Visual Studio 2012
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xamMapTest_2018_08_21", "xamMapTest_2018_08_21\xamMapTest_2018_08_21.csproj", "{EE05D175-C36C-4715-B750-3DDD0A130685}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|iPhoneSimulator = Debug|iPhoneSimulator
+		Release|iPhone = Release|iPhone
+		Release|iPhoneSimulator = Release|iPhoneSimulator
+		Debug|iPhone = Debug|iPhone
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{EE05D175-C36C-4715-B750-3DDD0A130685}.Debug|iPhoneSimulator.ActiveCfg = Debug|iPhoneSimulator
+		{EE05D175-C36C-4715-B750-3DDD0A130685}.Debug|iPhoneSimulator.Build.0 = Debug|iPhoneSimulator
+		{EE05D175-C36C-4715-B750-3DDD0A130685}.Release|iPhone.ActiveCfg = Release|iPhone
+		{EE05D175-C36C-4715-B750-3DDD0A130685}.Release|iPhone.Build.0 = Release|iPhone
+		{EE05D175-C36C-4715-B750-3DDD0A130685}.Release|iPhoneSimulator.ActiveCfg = Release|iPhoneSimulator
+		{EE05D175-C36C-4715-B750-3DDD0A130685}.Release|iPhoneSimulator.Build.0 = Release|iPhoneSimulator
+		{EE05D175-C36C-4715-B750-3DDD0A130685}.Debug|iPhone.ActiveCfg = Debug|iPhone
+		{EE05D175-C36C-4715-B750-3DDD0A130685}.Debug|iPhone.Build.0 = Debug|iPhone
+	EndGlobalSection
+EndGlobal
