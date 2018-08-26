@@ -3,7 +3,6 @@ using System.Linq;
 using UIKit;
 using MapKit;
 using CoreLocation;
-using Foundation;
 
 namespace xamMapTest_2018_08_21
 {
@@ -22,24 +21,23 @@ namespace xamMapTest_2018_08_21
 		{
 			base.ViewDidLoad();
 
-			var willEnterObj = UIApplication.Notifications.ObserveWillEnterForeground((sender, e) => displayNavigationTest());
+            _mapView = new MKMapView
+            {
+                TranslatesAutoresizingMaskIntoConstraints = false
+            };
+            _mapView.Delegate = new MyMKMapViewDelegate();
 
-			_locationManager = new CLLocationManager();
-			_locationManager.Delegate = new MyCLLocationManagerDelegate(_locationManager, _mapView);
+            _locationManager = new CLLocationManager();
+            _locationManager.Delegate = new MyCLLocationManagerDelegate(_locationManager, _mapView);
 
-			_mapView = new MKMapView
-			{
-				
-				TranslatesAutoresizingMaskIntoConstraints = false
-			};
-			_mapView.Delegate = new MyMKMapViewDelegate();
+            CLAuthorizationStatus status = CLLocationManager.Status;
+            if (status == CLAuthorizationStatus.NotDetermined)
+            {
+                Console.WriteLine("didChangeAuthorizationStatus");
+                _locationManager.RequestWhenInUseAuthorization();
+            }
 
-			CLAuthorizationStatus status = CLLocationManager.Status;
-			if (status == CLAuthorizationStatus.NotDetermined)
-			{
-				Console.WriteLine("didChangeAuthorizationStatus");
-				_locationManager.RequestAlwaysAuthorization();
-			}
+            var willEnterObj = UIApplication.Notifications.ObserveWillEnterForeground((sender, e) => InitUsersLocation());
 
 			_locationManager.DesiredAccuracy = CLLocation.AccuracyBest;
 			_locationManager.DistanceFilter = 300;
@@ -50,15 +48,31 @@ namespace xamMapTest_2018_08_21
 			_mapView.WidthAnchor.ConstraintEqualTo(View.WidthAnchor).Active = true;
 			_mapView.TopAnchor.ConstraintEqualTo(View.TopAnchor).Active = true;
 			_mapView.HeightAnchor.ConstraintEqualTo(View.HeightAnchor).Active = true;
-
 		}
+
 		public override void ViewDidAppear(bool animated)
 		{
 			base.ViewDidAppear(animated);
-			displayNavigationTest();
+
+            InitUsersLocation();
 		}
 
-		public override void DidReceiveMemoryWarning()
+        void InitUsersLocation()
+        {
+            if (!_mapView.Annotations.Any())
+            {
+                _mapView.RemoveAnnotations(_mapView.Annotations);
+            }
+
+            if (_mapView.Overlays != null)
+            {
+                _mapView.RemoveOverlays(_mapView.Overlays);
+            }
+
+            _locationManager.StartUpdatingLocation();
+        }
+
+        public override void DidReceiveMemoryWarning()
 		{
 			base.DidReceiveMemoryWarning();
 			// Release any cached data, images, etc that aren't in use.
@@ -68,7 +82,7 @@ namespace xamMapTest_2018_08_21
 		{
 			CLLocationManager _locationManager;
 			CLLocationCoordinate2D _userLocation;
-			CLLocationCoordinate2D _destination = new CLLocationCoordinate2D(35.727772, 139.770987);
+			CLLocationCoordinate2D _destination = new CLLocationCoordinate2D(35.729256, 139.772798);
 
 			MKMapView _mapView;
 
@@ -78,14 +92,8 @@ namespace xamMapTest_2018_08_21
 				_mapView = mapView;
 			}
 
-			void getRoute()
+            void GetRoute()
 			{
-				var destLocAnnotation = new MKPointAnnotation();
-				destLocAnnotation.Coordinate = _destination;
-				destLocAnnotation.Title = "聖地";
-
-				_mapView.AddAnnotation(destLocAnnotation);
-
 				var fromPlace = new MKMapItem(new MKPlacemark(_userLocation));
 				var toPlace = new MKMapItem(new MKPlacemark(_destination));
 
@@ -112,7 +120,7 @@ namespace xamMapTest_2018_08_21
 				});
 			}
 
-			void showUserAndDestinationOnMap()
+			public void ShowUserAndDestinationOnMap()
 			{
 				var maxLat = Math.Max(_userLocation.Latitude, _destination.Latitude);
 				var maxLon = Math.Max(_userLocation.Longitude, _destination.Longitude);
@@ -132,41 +140,22 @@ namespace xamMapTest_2018_08_21
 				_mapView.SetRegion(_mapView.RegionThatFits(region), true);
 			}
 
-			[Export("locationManager:didUpdateLocations:")]
-			public override void LocationsUpdated(CLLocationManager manager, CLLocation[] locations)
-			{
-				_mapView.AddAnnotation(new MKPlacemark(_destination));
-				_userLocation = new CLLocationCoordinate2D(manager.Location.Coordinate.Latitude, manager.Location.Coordinate.Longitude);
-				var userLocAnnotation = new MKPointAnnotation();
-				userLocAnnotation.Coordinate = _userLocation;
-				userLocAnnotation.Title = "現在地";
+            public override void LocationsUpdated(CLLocationManager manager, CLLocation[] locations)
+            {
+                var destLocAnnotation = new MKPointAnnotation();
+                destLocAnnotation.Coordinate = _destination;
+                destLocAnnotation.Title = "目的地";
+                _mapView.AddAnnotation(destLocAnnotation);
 
-				_mapView.AddAnnotation(userLocAnnotation);
+                _userLocation = new CLLocationCoordinate2D(manager.Location.Coordinate.Latitude, manager.Location.Coordinate.Longitude);
+                var userLocAnnotation = new MKPointAnnotation();
+                userLocAnnotation.Coordinate = _userLocation;
+                userLocAnnotation.Title = "現在地";
+                _mapView.AddAnnotation(userLocAnnotation);
 
-				getRoute();
-				showUserAndDestinationOnMap();
-			}
-
-			[Export("locationManager:didFailWithError:")]
-			public override void Failed(CLLocationManager manager, NSError error)
-			{
-				Console.WriteLine("locationManager error");
-			}
-
-			#region Test
-			public void Test()
-			{
-				_userLocation = new CLLocationCoordinate2D(35.6, 139.7);
-				var userLocAnnotation = new MKPointAnnotation();
-				userLocAnnotation.Coordinate = _userLocation;
-				userLocAnnotation.Title = "現在地";
-
-				_mapView.AddAnnotation(userLocAnnotation);
-
-				getRoute();
-				showUserAndDestinationOnMap();
-			}
-			#endregion
+                GetRoute();
+                ShowUserAndDestinationOnMap();
+            }
 		}
 
 		class MyMKMapViewDelegate : MKMapViewDelegate
@@ -177,31 +166,14 @@ namespace xamMapTest_2018_08_21
 				{
 					var polylineRenderer = new MKPolylineRenderer(overlay as MKPolyline)
 					{
-						StrokeColor = UIColor.Blue,
-						LineWidth = 1
+                        StrokeColor = UIColor.Red,
+						LineWidth = 2
 					};
 					return polylineRenderer;
 				}
 
 				return null;
 			}
-		}
-
-		void displayNavigationTest()
-		{
-			if (!_mapView.Annotations.Any())
-
-			{
-				_mapView.RemoveAnnotations(_mapView.Annotations);
-			}
-
-			if (_mapView.Overlays != null)
-			{
-				_mapView.RemoveOverlays(_mapView.Overlays);
-			}
-
-			var loc = new MyCLLocationManagerDelegate(_locationManager, _mapView);
-			loc.Test();
 		}
 	}
 }

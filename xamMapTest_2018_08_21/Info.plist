@@ -2,6 +2,16 @@
 <!DOCTYPE plist PUBLIC "-//Apple//DTD PLIST 1.0//EN" "http://www.apple.com/DTDs/PropertyList-1.0.dtd">
 <plist version="1.0">
 <dict>
+	<key>LSApplicationCategoryType</key>
+	<string>Privacy - Location Always Usage Description</string>
+	<key>NSLocationUsageDescription</key>
+	<string>位置情報使うよ</string>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>位置情報使うよ</string>
+	<key>NSLocationAlwaysUsageDescription</key>
+	<string>位置情報使うよ</string>
+	<key>NSLocationAlwaysAndWhenInUseUsageDescription</key>
+	<string>位置情報使うよ</string>
 	<key>CFBundleName</key>
 	<string>xamMapTest_2018_08_21</string>
 	<key>CFBundleIdentifier</key>
@@ -14,6 +24,8 @@
 	<true/>
 	<key>MinimumOSVersion</key>
 	<string>11.3</string>
+	<key>CFBundleExecutable</key>
+	<string></string>
 	<key>UIDeviceFamily</key>
 	<array>
 		<integer>1</integer>
